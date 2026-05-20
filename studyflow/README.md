@@ -104,6 +104,12 @@ npm test -- --coverage
 2. 已完成任务不能再次被修改为未开始或进行中状态
 3. 高优先级任务必须具有截止日期
 
+## 文档
+
+- [架构文档](docs/architecture.md) - DDD 分层架构说明
+- [API 文档](docs/api.md) - RESTful API 接口文档
+- [Prompt 记录表](docs/Prompt记录表.md) - Vibe Coding 协作过程记录
+
 ## 许可证
 
 MIT
