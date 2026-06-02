@@ -1,1 +1,0 @@
-{"version":3,"file":"DateRange.d.ts","sourceRoot":"","sources":["../../../src/domain/valueobject/DateRange.ts"],"names":[],"mappings":"AAAA,qBAAa,SAAS;aAEF,SAAS,EAAE,IAAI;aACf,OAAO,EAAE,IAAI;gBADb,SAAS,EAAE,IAAI,EACf,OAAO,EAAE,IAAI;IAO/B,QAAQ,CAAC,IAAI,EAAE,IAAI,GAAG,OAAO;CAG9B"}

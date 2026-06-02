@@ -1,3 +1,5 @@
+/// <reference types="@types/jest" />
+
 import { CreateTaskUseCase } from '../../../src/application/usecase/CreateTaskUseCase.js';
 import { InMemoryTaskRepository } from '../../../src/infrastructure/repository/InMemoryTaskRepository.js';
 import { Priority } from '../../../src/domain/valueobject/Priority.js';
