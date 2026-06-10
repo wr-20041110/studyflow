@@ -27,8 +27,8 @@ describe('Task Management Integration', () => {
 
   describe('Complete Task Lifecycle', () => {
     it('should create, update status and track progress', async () => {
-      const startDate = new Date('2026-05-01');
-      const endDate = new Date('2026-05-31');
+      const startDate = new Date('2026-12-01');
+      const endDate = new Date('2026-12-31');
 
       const initialReport = await getProgressReportUseCase.execute(userId, startDate, endDate);
       expect(initialReport.getStatistics().totalTasks).toBe(0);
@@ -38,7 +38,7 @@ describe('Task Management Integration', () => {
         title: '完成 TypeScript 课程',
         description: '学习 TypeScript 基础语法',
         priority: Priority.HIGH,
-        dueDate: new Date('2026-05-27')
+        dueDate: new Date('2026-12-27')
       });
 
       const task2 = await createTaskUseCase.execute({
@@ -85,8 +85,8 @@ describe('Task Management Integration', () => {
 
   describe('Multiple Users', () => {
     it('should track progress separately for different users', async () => {
-      const startDate = new Date('2026-05-01');
-      const endDate = new Date('2026-05-31');
+      const startDate = new Date('2026-12-01');
+      const endDate = new Date('2026-12-31');
       const user1Id = 'user-1';
       const user2Id = 'user-2';
 
@@ -118,7 +118,7 @@ describe('Task Management Integration', () => {
 
   describe('Task Filtering', () => {
     it('should filter tasks by various criteria', async () => {
-      const dueDate = new Date('2026-05-27');
+      const dueDate = new Date('2026-12-27');
 
       await createTaskUseCase.execute({
         userId,

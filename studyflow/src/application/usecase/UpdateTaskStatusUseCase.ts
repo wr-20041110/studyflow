@@ -28,7 +28,8 @@ export class UpdateTaskStatusUseCase {
       dueDate: task.getDueDate(),
       userId: task.getUserId(),
       createdAt: task.getCreatedAt(),
-      updatedAt: task.getUpdatedAt()
+      updatedAt: task.getUpdatedAt(),
+      tags: (task.getTags ? task.getTags() : []).map((t: any) => ({ name: t.getName(), color: t.getColor() }))
     };
   }
 }

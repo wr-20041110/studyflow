@@ -1,6 +1,11 @@
 import { Priority } from '../../domain/valueobject/Priority.js';
 import { TaskStatus } from '../../domain/valueobject/TaskStatus.js';
 
+export interface TagDto {
+  name: string;
+  color: string;
+}
+
 export interface TaskDto {
   id: string;
   title: string;
@@ -11,4 +16,5 @@ export interface TaskDto {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  tags: TagDto[];
 }

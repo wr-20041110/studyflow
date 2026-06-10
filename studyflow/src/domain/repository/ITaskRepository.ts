@@ -10,4 +10,5 @@ export interface ITaskRepository {
   findByStatus(status: TaskStatus): Promise<Task[]>;
   findByPriority(priority: Priority): Promise<Task[]>;
   findByUserIdAndStatus(userId: string, status: TaskStatus): Promise<Task[]>;
+  findByTags(tagNames: string[]): Promise<Task[]>;
 }

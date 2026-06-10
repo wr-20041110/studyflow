@@ -104,4 +104,35 @@ export interface ITaskService {
    *   - 所有任务都未开始
    */
   getProgressByUser(userId: string): Promise<ProgressSummary>;
+
+  /**
+   * 按标签筛选任务
+   * 前置条件：
+   *   - tagNames 非空数组
+   * 后置条件：
+   *   - 返回包含任一指定标签的任务列表
+   *   - OR 语义：任务包含任一标签即匹配
+   * 异常条件：
+   *   - tagNames 为空数组时返回空列表
+   * 边界情况：
+   *   - 没有任务包含指定标签
+   *   - 单个任务包含多个指定标签（不重复返回）
+   */
+  filterByTags(userId: string, tagNames: string[]): Promise<Task[]>;
+
+  /**
+   * 为任务添加标签
+   * 前置条件：
+   *   - taskId 非空
+   *   - 任务存在且未完成
+   *   - tagName 非空且长度 <= 30
+   * 后置条件：
+   *   - 标签添加到任务上
+   * 异常条件：
+   *   - 任务不存在时抛出异常
+   *   - 任务已完成时抛出异常
+   * 边界情况：
+   *   - 同名标签不重复添加（幂等）
+   */
+  addTagsToTask(taskId: string, tagNames: string[]): Promise<Task>;
 }

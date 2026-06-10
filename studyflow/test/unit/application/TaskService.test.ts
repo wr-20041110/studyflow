@@ -32,7 +32,7 @@ describe('TaskService - createTask', () => {
         title: '完成数学作业',
         description: '完成第三章习题',
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -52,7 +52,7 @@ describe('TaskService - createTask', () => {
         title: '准备英语演讲',
         description: '准备演讲稿和PPT',
         priority: Priority.MEDIUM,
-        dueDate: new Date('2026-05-29'),
+        dueDate: new Date('2026-12-29'),
         userId: 'user-123'
       };
 
@@ -68,7 +68,7 @@ describe('TaskService - createTask', () => {
         title: '紧急：提交项目报告',
         description: '必须在明天之前提交',
         priority: Priority.HIGH,
-        dueDate: new Date('2026-05-28'),
+        dueDate: new Date('2026-12-28'),
         userId: 'user-123'
       };
 
@@ -86,7 +86,7 @@ describe('TaskService - createTask', () => {
         title: 'A'.repeat(200),
         description: '测试描述',
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -100,7 +100,7 @@ describe('TaskService - createTask', () => {
         title: 'A'.repeat(201),
         description: '测试描述',
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -112,7 +112,7 @@ describe('TaskService - createTask', () => {
         title: '测试任务',
         description: 'A'.repeat(1000),
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -126,7 +126,7 @@ describe('TaskService - createTask', () => {
         title: '测试任务',
         description: 'A'.repeat(1001),
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -138,7 +138,7 @@ describe('TaskService - createTask', () => {
         title: '测试任务',
         description: '',
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -172,7 +172,7 @@ describe('TaskService - createTask', () => {
         title: '',
         description: '测试描述',
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -184,7 +184,7 @@ describe('TaskService - createTask', () => {
         title: null as any,
         description: '测试描述',
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: 'user-123'
       };
 
@@ -196,7 +196,7 @@ describe('TaskService - createTask', () => {
         title: '测试任务',
         description: '测试描述',
         priority: Priority.LOW,
-        dueDate: new Date('2026-05-30'),
+        dueDate: new Date('2026-12-30'),
         userId: ''
       };
 
@@ -244,7 +244,7 @@ describe('TaskService - completeTask', () => {
       getDescription: jest.fn().mockReturnValue('测试描述'),
       getStatus: jest.fn().mockReturnValue(TaskStatus.NOT_STARTED),
       getPriority: jest.fn().mockReturnValue(Priority.LOW),
-      getDueDate: jest.fn().mockReturnValue(new Date('2026-05-30')),
+      getDueDate: jest.fn().mockReturnValue(new Date('2026-12-30')),
       getUserId: jest.fn().mockReturnValue('user-123'),
       getCreatedAt: jest.fn().mockReturnValue(new Date()),
       getUpdatedAt: jest.fn().mockReturnValue(new Date()),
@@ -352,9 +352,9 @@ describe('TaskService - listTasksByPriority', () => {
         markAsCompleted: jest.fn(),
       } as unknown as jest.Mocked<Task>);
 
-      const lowTask = createMockTask('task-1', Priority.LOW, new Date('2026-06-01'));
-      const highTask = createMockTask('task-2', Priority.HIGH, new Date('2026-05-28'));
-      const mediumTask = createMockTask('task-3', Priority.MEDIUM, new Date('2026-05-30'));
+      const lowTask = createMockTask('task-1', Priority.LOW, new Date('2026-12-01'));
+      const highTask = createMockTask('task-2', Priority.HIGH, new Date('2026-12-28'));
+      const mediumTask = createMockTask('task-3', Priority.MEDIUM, new Date('2026-12-30'));
 
       mockRepository.findByUserId.mockResolvedValue([lowTask, highTask, mediumTask]);
 
@@ -389,7 +389,7 @@ describe('TaskService - listTasksByPriority', () => {
         markAsCompleted: jest.fn(),
       } as unknown as jest.Mocked<Task>);
 
-      const taskWithDueDate = createMockTask('task-1', Priority.HIGH, new Date('2026-05-28'));
+      const taskWithDueDate = createMockTask('task-1', Priority.HIGH, new Date('2026-12-28'));
       const taskWithoutDueDate = createMockTask('task-2', Priority.HIGH, null);
 
       mockRepository.findByUserId.mockResolvedValue([taskWithDueDate, taskWithoutDueDate]);
@@ -433,8 +433,8 @@ describe('TaskService - listTasksByPriority', () => {
         markAsCompleted: jest.fn(),
       } as unknown as jest.Mocked<Task>);
 
-      const task1 = createMockTask('task-1', new Date('2026-05-30'));
-      const task2 = createMockTask('task-2', new Date('2026-05-28'));
+      const task1 = createMockTask('task-1', new Date('2026-12-30'));
+      const task2 = createMockTask('task-2', new Date('2026-12-28'));
 
       mockRepository.findByUserId.mockResolvedValue([task1, task2]);
 
@@ -490,9 +490,9 @@ describe('TaskService - listDueTasks', () => {
         markAsCompleted: jest.fn(),
       } as unknown as jest.Mocked<Task>);
 
-      const notStartedTask = createMockTask('task-1', TaskStatus.NOT_STARTED, new Date('2026-05-26'));
-      const completedTask = createMockTask('task-2', TaskStatus.COMPLETED, new Date('2026-05-26'));
-      const inProgressTask = createMockTask('task-3', TaskStatus.IN_PROGRESS, new Date('2026-05-26'));
+      const notStartedTask = createMockTask('task-1', TaskStatus.NOT_STARTED, new Date('2026-12-26'));
+      const completedTask = createMockTask('task-2', TaskStatus.COMPLETED, new Date('2026-12-26'));
+      const inProgressTask = createMockTask('task-3', TaskStatus.IN_PROGRESS, new Date('2026-12-26'));
 
       mockRepository.findByStatus.mockImplementation((status: TaskStatus) => {
         if (status === TaskStatus.NOT_STARTED) return Promise.resolve([notStartedTask]);
@@ -501,7 +501,7 @@ describe('TaskService - listDueTasks', () => {
         return Promise.resolve([]);
       });
 
-      const queryDate = new Date('2026-05-27');
+      const queryDate = new Date('2026-12-27');
       const result = await taskService.listDueTasks(queryDate);
 
       expect(result).toHaveLength(2);
@@ -511,7 +511,7 @@ describe('TaskService - listDueTasks', () => {
 
   describe('边界值测试', () => {
     test('指定日期没有到期任务应返回空数组', async () => {
-      const queryDate = new Date('2026-05-27');
+      const queryDate = new Date('2026-12-27');
       const result = await taskService.listDueTasks(queryDate);
 
       expect(result).toHaveLength(0);
@@ -536,13 +536,13 @@ describe('TaskService - listDueTasks', () => {
         markAsCompleted: jest.fn(),
       } as unknown as jest.Mocked<Task>);
 
-      const task = createMockTask('task-1', new Date('2026-05-27'));
+      const task = createMockTask('task-1', new Date('2026-12-27'));
       mockRepository.findByStatus.mockImplementation((status: TaskStatus) => {
         if (status === TaskStatus.NOT_STARTED) return Promise.resolve([task]);
         return Promise.resolve([]);
       });
 
-      const queryDate = new Date('2026-05-27');
+      const queryDate = new Date('2026-12-27');
       const result = await taskService.listDueTasks(queryDate);
 
       expect(result).toHaveLength(1);
@@ -560,7 +560,7 @@ describe('TaskService - listDueTasks', () => {
         getDescription: jest.fn().mockReturnValue('描述'),
         getStatus: jest.fn().mockReturnValue(status),
         getPriority: jest.fn().mockReturnValue(Priority.MEDIUM),
-        getDueDate: jest.fn().mockReturnValue(new Date('2026-05-26')),
+        getDueDate: jest.fn().mockReturnValue(new Date('2026-12-26')),
         getUserId: jest.fn().mockReturnValue('user-123'),
         getCreatedAt: jest.fn().mockReturnValue(new Date()),
         getUpdatedAt: jest.fn().mockReturnValue(new Date()),
@@ -578,7 +578,7 @@ describe('TaskService - listDueTasks', () => {
         return Promise.resolve([]);
       });
 
-      const queryDate = new Date('2026-05-27');
+      const queryDate = new Date('2026-12-27');
       const result = await taskService.listDueTasks(queryDate);
 
       expect(result.every((t: Task) => t.getStatus() !== TaskStatus.COMPLETED)).toBe(true);
@@ -608,7 +608,7 @@ describe('TaskService - listDueTasks', () => {
 
       mockRepository.findByStatus.mockResolvedValue([createMockTask('task-1', null)]);
 
-      const queryDate = new Date('2026-05-27');
+      const queryDate = new Date('2026-12-27');
       const result = await taskService.listDueTasks(queryDate);
 
       expect(result).toHaveLength(0);
@@ -642,7 +642,7 @@ describe('TaskService - getProgressByUser', () => {
         getDescription: jest.fn().mockReturnValue('描述'),
         getStatus: jest.fn().mockReturnValue(status),
         getPriority: jest.fn().mockReturnValue(Priority.MEDIUM),
-        getDueDate: jest.fn().mockReturnValue(new Date('2026-05-30')),
+        getDueDate: jest.fn().mockReturnValue(new Date('2026-12-30')),
         getUserId: jest.fn().mockReturnValue('user-123'),
         getCreatedAt: jest.fn().mockReturnValue(new Date()),
         getUpdatedAt: jest.fn().mockReturnValue(new Date()),
@@ -681,7 +681,7 @@ describe('TaskService - getProgressByUser', () => {
         getDescription: jest.fn().mockReturnValue('描述'),
         getStatus: jest.fn().mockReturnValue(status),
         getPriority: jest.fn().mockReturnValue(Priority.MEDIUM),
-        getDueDate: jest.fn().mockReturnValue(new Date('2026-05-30')),
+        getDueDate: jest.fn().mockReturnValue(new Date('2026-12-30')),
         getUserId: jest.fn().mockReturnValue('user-123'),
         getCreatedAt: jest.fn().mockReturnValue(new Date()),
         getUpdatedAt: jest.fn().mockReturnValue(new Date()),
@@ -730,7 +730,7 @@ describe('TaskService - getProgressByUser', () => {
         getDescription: jest.fn().mockReturnValue('描述'),
         getStatus: jest.fn().mockReturnValue(TaskStatus.COMPLETED),
         getPriority: jest.fn().mockReturnValue(Priority.MEDIUM),
-        getDueDate: jest.fn().mockReturnValue(new Date('2026-05-30')),
+        getDueDate: jest.fn().mockReturnValue(new Date('2026-12-30')),
         getUserId: jest.fn().mockReturnValue('user-123'),
         getCreatedAt: jest.fn().mockReturnValue(new Date()),
         getUpdatedAt: jest.fn().mockReturnValue(new Date()),
@@ -763,7 +763,7 @@ describe('TaskService - getProgressByUser', () => {
         getDescription: jest.fn().mockReturnValue('描述'),
         getStatus: jest.fn().mockReturnValue(TaskStatus.NOT_STARTED),
         getPriority: jest.fn().mockReturnValue(Priority.MEDIUM),
-        getDueDate: jest.fn().mockReturnValue(new Date('2026-05-30')),
+        getDueDate: jest.fn().mockReturnValue(new Date('2026-12-30')),
         getUserId: jest.fn().mockReturnValue('user-123'),
         getCreatedAt: jest.fn().mockReturnValue(new Date()),
         getUpdatedAt: jest.fn().mockReturnValue(new Date()),
@@ -799,7 +799,7 @@ describe('TaskService - getProgressByUser', () => {
         getDescription: jest.fn().mockReturnValue('描述'),
         getStatus: jest.fn().mockReturnValue(status),
         getPriority: jest.fn().mockReturnValue(Priority.MEDIUM),
-        getDueDate: jest.fn().mockReturnValue(new Date('2026-05-30')),
+        getDueDate: jest.fn().mockReturnValue(new Date('2026-12-30')),
         getUserId: jest.fn().mockReturnValue('user-123'),
         getCreatedAt: jest.fn().mockReturnValue(new Date()),
         getUpdatedAt: jest.fn().mockReturnValue(new Date()),
