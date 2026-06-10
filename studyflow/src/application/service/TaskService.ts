@@ -7,6 +7,7 @@ import { ITaskRepository } from '../../domain/repository/ITaskRepository.js';
 import { Task } from '../../domain/entity/Task.js';
 import { TaskStatus } from '../../domain/valueobject/TaskStatus.js';
 import { Priority } from '../../domain/valueobject/Priority.js';
+import { Tag } from '../../domain/valueobject/Tag.js';
 
 export class TaskService implements ITaskService {
   private readonly TITLE_MAX_LENGTH = 200;
@@ -156,6 +157,42 @@ export class TaskService implements ITaskService {
       notStartedTasks: notStartedTasks.length,
       completionRate
     };
+  }
+
+  async filterByTags(userId: string, tagNames: string[]): Promise<Task[]> {
+    if (!tagNames || tagNames.length === 0) {
+      return [];
+    }
+
+    if (!userId || userId.trim() === '') {
+      throw new Error('User ID cannot be empty');
+    }
+
+    const tasks = await this.taskRepository.findByTags(tagNames);
+
+    // 按 userId 过滤
+    return tasks.filter(t => t.getUserId() === userId);
+  }
+
+  async addTagsToTask(taskId: string, tagNames: string[]): Promise<Task> {
+    if (!taskId || taskId.trim() === '') {
+      throw new Error('Task ID cannot be empty');
+    }
+
+    const task = await this.taskRepository.findById(taskId);
+
+    if (!task) {
+      throw new Error(`Task with ID ${taskId} not found`);
+    }
+
+    for (const name of tagNames) {
+      const tag = Tag.fromName(name);
+      task.addTag(tag);
+    }
+
+    await this.taskRepository.save(task);
+
+    return task;
   }
 
   private generateId(): string {

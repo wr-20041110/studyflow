@@ -36,6 +36,15 @@ export class InMemoryTaskRepository implements ITaskRepository {
     );
   }
 
+  async findByTags(tagNames: string[]): Promise<Task[]> {
+    if (tagNames.length === 0) {
+      return [];
+    }
+    return Array.from(this.tasks.values()).filter(
+      task => tagNames.some(tagName => task.hasTagByName(tagName))
+    );
+  }
+
   clear(): void {
     this.tasks.clear();
   }

@@ -34,7 +34,7 @@ describe('CreateTaskUseCase', () => {
   });
 
   it('should create a task with due date', async () => {
-    const dueDate = new Date('2026-05-27');
+    const dueDate = new Date('2026-12-27');
 
     const result = await useCase.execute({
       userId: 'user-1',

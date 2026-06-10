@@ -2,6 +2,7 @@ import { InMemoryTaskRepository } from '../../../src/infrastructure/repository/I
 import { Task } from '../../../src/domain/entity/Task.js';
 import { TaskStatus } from '../../../src/domain/valueobject/TaskStatus.js';
 import { Priority } from '../../../src/domain/valueobject/Priority.js';
+import { Tag } from '../../../src/domain/valueobject/Tag.js';
 
 describe('InMemoryTaskRepository', () => {
   let repository: InMemoryTaskRepository;
@@ -50,7 +51,7 @@ describe('InMemoryTaskRepository', () => {
   });
 
   it('should find tasks by user id', async () => {
-    const dueDate = new Date('2026-05-27');
+    const dueDate = new Date('2026-12-27');
     const task1 = Task.create('task-1', '任务1', '描述1', Priority.MEDIUM, null, 'user-1');
     const task2 = Task.create('task-2', '任务2', '描述2', Priority.HIGH, dueDate, 'user-1');
     const task3 = Task.create('task-3', '任务3', '描述3', Priority.LOW, null, 'user-2');
@@ -84,7 +85,7 @@ describe('InMemoryTaskRepository', () => {
   });
 
   it('should find tasks by status', async () => {
-    const dueDate = new Date('2026-05-27');
+    const dueDate = new Date('2026-12-27');
     const task1 = Task.create('task-1', '任务1', '描述1', Priority.MEDIUM, null, 'user-1');
     const task2 = Task.create('task-2', '任务2', '描述2', Priority.HIGH, dueDate, 'user-1');
     const task3 = Task.create('task-3', '任务3', '描述3', Priority.LOW, null, 'user-1');
@@ -103,7 +104,7 @@ describe('InMemoryTaskRepository', () => {
   });
 
   it('should find tasks by priority', async () => {
-    const dueDate = new Date('2026-05-27');
+    const dueDate = new Date('2026-12-27');
     const task1 = Task.create('task-1', '任务1', '描述1', Priority.HIGH, dueDate, 'user-1');
     const task2 = Task.create('task-2', '任务2', '描述2', Priority.HIGH, dueDate, 'user-1');
     const task3 = Task.create('task-3', '任务3', '描述3', Priority.LOW, null, 'user-1');
@@ -118,7 +119,7 @@ describe('InMemoryTaskRepository', () => {
   });
 
   it('should find tasks by user id and status', async () => {
-    const dueDate = new Date('2026-05-27');
+    const dueDate = new Date('2026-12-27');
     const task1 = Task.create('task-1', '任务1', '描述1', Priority.MEDIUM, null, 'user-1');
     const task2 = Task.create('task-2', '任务2', '描述2', Priority.HIGH, dueDate, 'user-1');
     const task3 = Task.create('task-3', '任务3', '描述3', Priority.LOW, null, 'user-2');
@@ -137,7 +138,7 @@ describe('InMemoryTaskRepository', () => {
   });
 
   it('should clear all tasks', async () => {
-    const dueDate = new Date('2026-05-27');
+    const dueDate = new Date('2026-12-27');
     const task1 = Task.create('task-1', '任务1', '描述1', Priority.MEDIUM, null, 'user-1');
     const task2 = Task.create('task-2', '任务2', '描述2', Priority.HIGH, dueDate, 'user-1');
 
@@ -150,7 +151,7 @@ describe('InMemoryTaskRepository', () => {
   });
 
   it('should return correct task count', async () => {
-    const dueDate = new Date('2026-05-27');
+    const dueDate = new Date('2026-12-27');
     const task1 = Task.create('task-1', '任务1', '描述1', Priority.MEDIUM, null, 'user-1');
     const task2 = Task.create('task-2', '任务2', '描述2', Priority.HIGH, dueDate, 'user-1');
 
@@ -161,5 +162,62 @@ describe('InMemoryTaskRepository', () => {
 
     await repository.save(task2);
     expect(repository.size()).toBe(2);
+  });
+
+  describe('findByTags', () => {
+    it('should find tasks by single tag', async () => {
+      const dueDate = new Date('2026-06-15');
+      const task1 = Task.create('task-1', '数学作业', '描述', Priority.HIGH, dueDate, 'user-1', [Tag.fromName('数学')]);
+      const task2 = Task.create('task-2', '英语作业', '描述', Priority.MEDIUM, null, 'user-1', [Tag.fromName('英语')]);
+
+      await repository.save(task1);
+      await repository.save(task2);
+
+      const result = await repository.findByTags(['数学']);
+      expect(result.length).toBe(1);
+      expect(result[0].getTitle()).toBe('数学作业');
+    });
+
+    it('should find tasks by multiple tags (OR semantics)', async () => {
+      const dueDate = new Date('2026-06-15');
+      const task1 = Task.create('task-1', '数学作业', '描述', Priority.HIGH, dueDate, 'user-1', [Tag.fromName('数学')]);
+      const task2 = Task.create('task-2', '英语作业', '描述', Priority.MEDIUM, null, 'user-1', [Tag.fromName('英语')]);
+      const task3 = Task.create('task-3', '物理作业', '描述', Priority.LOW, null, 'user-1', [Tag.fromName('物理')]);
+
+      await repository.save(task1);
+      await repository.save(task2);
+      await repository.save(task3);
+
+      const result = await repository.findByTags(['数学', '英语']);
+      expect(result.length).toBe(2);
+    });
+
+    it('should return empty array for empty tag list', async () => {
+      const result = await repository.findByTags([]);
+      expect(result).toHaveLength(0);
+    });
+
+    it('should return empty array when no tasks match tags', async () => {
+      const dueDate = new Date('2026-06-15');
+      const task1 = Task.create('task-1', '数学作业', '描述', Priority.HIGH, dueDate, 'user-1', [Tag.fromName('数学')]);
+      await repository.save(task1);
+
+      const result = await repository.findByTags(['不存在的标签']);
+      expect(result).toHaveLength(0);
+    });
+
+    it('should match task with multiple tags', async () => {
+      const dueDate = new Date('2026-06-15');
+      const task1 = Task.create('task-1', '编程作业', '描述', Priority.HIGH, dueDate, 'user-1', [
+        Tag.fromName('编程'),
+        Tag.fromName('TypeScript')
+      ]);
+      await repository.save(task1);
+
+      const result = await repository.findByTags(['TypeScript']);
+      expect(result.length).toBe(1);
+      expect(result[0].hasTagByName('TypeScript')).toBe(true);
+      expect(result[0].hasTagByName('编程')).toBe(true);
+    });
   });
 });

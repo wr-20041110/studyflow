@@ -1,6 +1,7 @@
 import { CreateTaskUseCase } from '../../application/usecase/CreateTaskUseCase.js';
 import { UpdateTaskStatusUseCase } from '../../application/usecase/UpdateTaskStatusUseCase.js';
 import { GetProgressReportUseCase } from '../../application/usecase/GetProgressReportUseCase.js';
+import { FilterTasksByTagsUseCase } from '../../application/usecase/FilterTasksByTagsUseCase.js';
 import { InMemoryTaskRepository } from '../../infrastructure/repository/InMemoryTaskRepository.js';
 import { Priority } from '../../domain/valueobject/Priority.js';
 import { TaskStatus } from '../../domain/valueobject/TaskStatus.js';
@@ -9,6 +10,7 @@ export class TaskCLI {
   private createTaskUseCase: CreateTaskUseCase;
   private updateTaskStatusUseCase: UpdateTaskStatusUseCase;
   private getProgressReportUseCase: GetProgressReportUseCase;
+  private filterTasksByTagsUseCase: FilterTasksByTagsUseCase;
   private repository: InMemoryTaskRepository;
 
   constructor() {
@@ -16,13 +18,15 @@ export class TaskCLI {
     this.createTaskUseCase = new CreateTaskUseCase(this.repository);
     this.updateTaskStatusUseCase = new UpdateTaskStatusUseCase(this.repository);
     this.getProgressReportUseCase = new GetProgressReportUseCase(this.repository);
+    this.filterTasksByTagsUseCase = new FilterTasksByTagsUseCase(this.repository);
   }
 
   async createTask(
     title: string,
     description: string,
     priority: Priority,
-    dueDate: Date | null
+    dueDate: Date | null,
+    tags: string[] = []
   ): Promise<void> {
     try {
       const result = await this.createTaskUseCase.execute({
@@ -30,7 +34,8 @@ export class TaskCLI {
         title,
         description,
         priority,
-        dueDate
+        dueDate,
+        tags: tags.length > 0 ? tags : undefined
       });
 
       console.log(`✅ 任务创建成功！`);
@@ -40,6 +45,9 @@ export class TaskCLI {
       console.log(`   状态: ${result.status}`);
       if (result.dueDate) {
         console.log(`   截止日期: ${result.dueDate.toLocaleDateString('zh-CN')}`);
+      }
+      if (result.tags && result.tags.length > 0) {
+        console.log(`   标签: ${result.tags.map((t: any) => `#${t.name}`).join(', ')}`);
       }
     } catch (error) {
       console.error(`❌ 创建任务失败: ${error instanceof Error ? error.message : String(error)}`);
@@ -104,6 +112,10 @@ export class TaskCLI {
         console.log(`   ID: ${task.id}`);
         console.log(`   优先级: ${priorityColor}${task.getPriority()}\x1b[0m`);
         console.log(`   截止日期: ${dueDateStr}`);
+        const tags = task.getTags();
+        if (tags && tags.length > 0) {
+          console.log(`   标签: ${tags.map(t => `#${t.getName()}`).join(', ')}`);
+        }
         console.log(`   创建时间: ${task.getCreatedAt().toLocaleString('zh-CN')}`);
         console.log(``);
       });
@@ -134,6 +146,57 @@ export class TaskCLI {
     }
   }
 
+  async filterByTag(tagName: string): Promise<void> {
+    try {
+      const results = await this.filterTasksByTagsUseCase.execute({
+        tags: [tagName],
+        userId: 'user-001'
+      });
+
+      console.log(`\n🏷️  标签筛选结果: #${tagName} (${results.length} 个任务)`);
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+
+      if (results.length === 0) {
+        console.log(`   没有找到包含标签 "#${tagName}" 的任务`);
+      } else {
+        results.forEach((task, index) => {
+          const statusIcon = this.getStatusIcon(task.status);
+          console.log(`${index + 1}. ${statusIcon} ${task.title}`);
+          console.log(`   ID: ${task.id}  优先级: ${task.priority}`);
+          if (task.tags && task.tags.length > 0) {
+            console.log(`   标签: ${task.tags.map(t => `#${t.name}`).join(', ')}`);
+          }
+          console.log('');
+        });
+      }
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+    } catch (error) {
+      console.error(`❌ 标签筛选失败: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  async addTags(taskId: string, tagNames: string[]): Promise<void> {
+    try {
+      const task = await this.repository.findById(taskId);
+      if (!task) {
+        console.log(`❌ 未找到任务: ${taskId}`);
+        return;
+      }
+
+      for (const name of tagNames) {
+        const { Tag } = await import('../../domain/valueobject/Tag.js');
+        task.addTag(new Tag(name.trim()));
+      }
+      await this.repository.save(task);
+
+      console.log(`✅ 标签添加成功！`);
+      console.log(`   任务: ${task.getTitle()}`);
+      console.log(`   标签: ${task.getTags().map(t => `#${t.getName()}`).join(', ')}`);
+    } catch (error) {
+      console.error(`❌ 添加标签失败: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
   getRepository(): InMemoryTaskRepository {
     return this.repository;
   }
@@ -147,26 +210,29 @@ async function main() {
   console.log(`\n🎓 StudyFlow - 学习任务管理系统`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
 
-  // 创建示例任务
+  // 创建示例任务（带标签）
   await cli.createTask(
     '完成 TypeScript 课程第1章',
     '阅读文档并完成练习题',
     Priority.HIGH,
-    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7天后
+    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7天后
+    ['编程', 'TypeScript']
   );
 
   await cli.createTask(
     '复习 JavaScript 闭包概念',
     '整理笔记并写一个示例',
     Priority.MEDIUM,
-    null
+    null,
+    ['编程', 'JavaScript']
   );
 
   await cli.createTask(
     '学习 React Hooks',
     '阅读官方文档并完成 Todo 示例',
     Priority.LOW,
-    new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14天后
+    new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14天后
+    ['前端', 'React']
   );
 
   // 查看任务列表
@@ -177,6 +243,9 @@ async function main() {
   if (tasks.length > 0) {
     await cli.updateTaskStatus(tasks[0].id, TaskStatus.IN_PROGRESS);
   }
+
+  // 按标签筛选
+  await cli.filterByTag('编程');
 
   // 再次查看任务列表
   await cli.listTasks(userId);

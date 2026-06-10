@@ -6,4 +6,5 @@ export interface CreateTaskDto {
   description: string;
   priority: Priority;
   dueDate: Date | null;
+  tags?: string[];
 }

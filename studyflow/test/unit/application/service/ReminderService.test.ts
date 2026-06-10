@@ -63,7 +63,7 @@ describe('ReminderService', () => {
 
     it('应避免同一任务被同一策略重复提醒', async () => {
       const strategy = new HighPriorityReminderStrategy();
-      const task = Task.create('task-1', '高优先级任务', '紧急', Priority.HIGH, new Date('2026-06-10'), 'user-1');
+      const task = Task.create('task-1', '高优先级任务', '紧急', Priority.HIGH, new Date('2026-06-20'), 'user-1');
 
       mockRepository.findByUserId.mockResolvedValue([task]);
 
@@ -74,12 +74,9 @@ describe('ReminderService', () => {
     });
 
     it('对于不同策略应分别检查任务', async () => {
-      // 设置当前时间为 6 月 3 日
-      const currentTime = new Date('2026-06-03T00:00:00Z');
-      jest.spyOn(Date, 'now').mockReturnValue(currentTime.getTime());
-
-      // 创建测试任务
-      const task = Task.create('task-1', '高优先级即将到期任务', '紧急且将到期', Priority.HIGH, new Date('2026-06-04T00:00:00Z'), 'user-1');
+      // 创建测试任务：HIGH 优先级 + 1 天后到期 → 两个策略都应触发
+      const tomorrow = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
+      const task = Task.create('task-1', '高优先级即将到期任务', '紧急且将到期', Priority.HIGH, tomorrow, 'user-1');
 
       mockRepository.findByUserId.mockResolvedValue([task]);
 
@@ -95,13 +92,11 @@ describe('ReminderService', () => {
       // 验证结果
       expect(count).toBe(2); // 两个策略都触发
       expect(mockNotificationService.sendNotification).toHaveBeenCalledTimes(2);
-
-      jest.restoreAllMocks();
     });
 
     it('已完成的任务不应触发提醒', async () => {
       const strategy = new HighPriorityReminderStrategy();
-      const task = Task.create('task-1', '已完成的高优先级任务', '已完成', Priority.HIGH, new Date('2026-06-10'), 'user-1');
+      const task = Task.create('task-1', '已完成的高优先级任务', '已完成', Priority.HIGH, new Date('2026-06-20'), 'user-1');
 
       task.markAsCompleted();
       mockRepository.findByUserId.mockResolvedValue([task]);
@@ -174,14 +169,13 @@ describe('ReminderService', () => {
 
   describe('集成测试 - 完整流程', () => {
     it('应该正确处理到期前提醒和高优先级提醒', async () => {
-      // 设置当前时间为 6 月 3 日
-      const currentTime = new Date('2026-06-03T00:00:00Z');
-      jest.spyOn(Date, 'now').mockReturnValue(currentTime.getTime());
+      const tomorrow = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
+      const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
       // 创建测试任务
-      const task1 = Task.create('task-1', '高优先级任务', '紧急', Priority.HIGH, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 'user-1');
-      const task2 = Task.create('task-2', '即将到期任务', '将到期', Priority.MEDIUM, new Date('2026-06-04T00:00:00Z'), 'user-1');
-      const task3 = Task.create('task-3', '普通任务', '不紧急', Priority.LOW, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 'user-1');
+      const task1 = Task.create('task-1', '高优先级任务', '紧急', Priority.HIGH, nextWeek, 'user-1');
+      const task2 = Task.create('task-2', '即将到期任务', '将到期', Priority.MEDIUM, tomorrow, 'user-1');
+      const task3 = Task.create('task-3', '普通任务', '不紧急', Priority.LOW, nextWeek, 'user-1');
 
       mockRepository.findByUserId.mockResolvedValue([task1, task2, task3]);
 
