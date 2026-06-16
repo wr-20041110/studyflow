@@ -285,11 +285,11 @@ jobs:
 
 ### 7.2 CI 验证
 
-```
-✅ npm run lint  → 0 errors, 27 warnings (均为预存)
-✅ npm test      → 18 suites, 190 tests, 100% pass
-✅ npm run build → TypeScript 编译通过
-```
+| 步骤 | 命令 | 结果 | 说明 |
+|------|------|------|------|
+| 静态检查 | `npm run lint` | ✅ 通过 | 0 errors, 27 warnings（均为预存） |
+| 单元测试 | `npm test` | ✅ 通过 | 18 suites, 190 tests, 100% pass |
+| 编译构建 | `npm run build` | ✅ 通过 | TypeScript 编译无错误 |
 
 ---
 
@@ -384,3 +384,38 @@ jobs:
 ```
 
 本次实验成功建立了从开发到集成的完整个人工程闭环，为后续团队协作和更大规模开发奠定了基础。
+
+---
+
+## 实验心得
+
+本次实验最深刻的体会是：**独立开发不等于随意开发**。即使在个人项目中，需求拆分、分支管理、代码审查、CI 流水线这些工程实践同样不可或缺——它们不是在团队中才需要的"流程负担"，而是保障代码质量的基本功。AI 工具在本次实验中扮演了高效协作者的角色：它能快速生成符合架构风格的代码框架、系统性地扫描变更发现遗漏、将零散信息整理为结构化文档，但 AI 不具备业务上下文理解能力（如"空标签筛选应返回空结果"这类隐含语义），也会犯 JSON 格式遗漏、未使用导入等低级错误，因此**人工判断始终是不可替代的最后一道防线**。此外，预存测试日期的全面过期问题让我深刻认识到测试数据时效性的重要——硬编码的绝对日期终将成为技术债务，相对时间才是可持续的测试策略。从 Tag 值对象的不可变性设计到 CI 流水线的 lint→test→build 分层拦截，每一个细节都在提醒我：**好的软件工程不是做完功能，而是让代码经得起时间和变更的考验**。
+
+---
+
+## 代码仓库与成果
+
+| 项目 | 地址 / 说明 |
+|------|-------------|
+| 代码仓库 | [https://github.com/wr-20041110/studyflow](https://github.com/wr-20041110/studyflow) |
+| 实验分支 | `feat/task-tag-filter`（已合并至 `master`） |
+| 最终提交 | `e9756c4` — docs: restructure exp4 report with 9-section outline |
+| 本地路径 | `C:\Users\Administrator\Desktop\新建文件夹\studyflow` |
+
+### 成果清单
+
+| 类别 | 文件 | 说明 |
+|------|------|------|
+| 实验报告 | `docs/exp4-report.md` | 9 章节完整报告（Markdown） |
+| Word 报告 | `docs/exp4-report.html` | Word 可直接打开的 HTML 版本 |
+| 任务拆分 | `docs/exp4-task-splitting.md` | 11 个任务卡片详细拆分 |
+| 代码审查 | `docs/exp4-code-review.md` | AI 代码审查记录 |
+| CI 说明 | `docs/exp4-ci-explanation.md` | CI 流水线配置说明 |
+| 自查清单 | `docs/exp4-self-check.md` | 实验完成度自查 |
+| 提交模板 | `docs/exp4-commit-template.md` | Git 提交规范模板 |
+| 核心代码 | `src/domain/valueobject/Tag.ts` | Tag 值对象（新增） |
+| 实体扩展 | `src/domain/entity/Task.ts` | Task 标签字段与方法（修改） |
+| 仓储实现 | `src/infrastructure/repository/InMemoryTaskRepository.ts` | findByTags 实现（修改） |
+| 用例 | `src/application/use-case/FilterTasksByTagsUseCase.ts` | 标签筛选用例（新增） |
+| CI 配置 | `.github/workflows/ci.yml` | GitHub Actions 流水线 |
+| 测试代码 | `tests/unit/Tag.test.ts` 等 4 个文件 | 32 个新增测试，190 tests 全通过 |
