@@ -419,3 +419,100 @@ jobs:
 | 用例 | `src/application/use-case/FilterTasksByTagsUseCase.ts` | 标签筛选用例（新增） |
 | CI 配置 | `.github/workflows/ci.yml` | GitHub Actions 流水线 |
 | 测试代码 | `tests/unit/Tag.test.ts` 等 4 个文件 | 32 个新增测试，190 tests 全通过 |
+
+---
+
+## 提交记录
+
+| 提交哈希 | 提交信息 | 类型 |
+|----------|----------|------|
+| `7574e90` | docs: refine exp4 report - tables, reflections, repo info, HTML export | docs |
+| `e9756c4` | docs: restructure exp4 report with 9-section outline | docs |
+| `d792707` | Merge branch 'feat/task-tag-filter' | merge |
+| `aa13a98` | docs: add experiment 4 documentation and reports | docs |
+| `a2221f1` | feat(domain): add tag classification and filtering support | feat |
+| `702da42` | feat: introduce strategy pattern for reminder system refactoring | feat |
+| `d32a9ea` | feat: add TaskService, documentation, and cleanup dist files | feat |
+| `2e1a571` | Add_documentation_and_Prompt_record | docs |
+| `b3a0020` | Add_gitignore | chore |
+| `4cafdf0` | Initial | chore |
+
+---
+
+## 自查清单（摘要）
+
+| 维度 | 检查项 | 状态 |
+|------|--------|------|
+| 代码质量 | TypeScript 编译通过 | ✅ |
+| | ESLint 静态检查通过（0 errors） | ✅ |
+| | 所有单元测试通过（190/190） | ✅ |
+| | 新增代码有对应测试覆盖 | ✅ |
+| | 不破坏现有 API 契约 | ✅ |
+| | 无 console.log 调试代码残留 | ✅ |
+| 功能完整性 | Tag 值对象：创建、验证、相等性判断 | ✅ |
+| | Task 实体：标签增删查、批量设置、幂等添加 | ✅ |
+| | 已完成任务不能修改标签 | ✅ |
+| | 仓库层：按标签 OR 语义查询 | ✅ |
+| | 应用层：筛选用例、标签操作服务 | ✅ |
+| | CLI：filterByTag / addTags 命令 | ✅ |
+| 业务规则 | BR-01: 截止时间 ≥ 创建时间 | ✅ |
+| | BR-02: 已完成任务不能修改标签 | ✅ |
+| | BR-03: 高优先级任务必须有截止日期 | ✅ |
+| CI | GitHub Actions 工作流已配置 | ✅ |
+| | CI 步骤：checkout → npm ci → lint → test → build | ✅ |
+| 文档 | 6 份实验文档齐全 | ✅ |
+| | 9 章节完整实验报告 | ✅ |
+
+---
+
+## CI 配置文件
+
+**文件路径**：`.github/workflows/ci.yml`
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 静态检查 (Lint)
+        run: npm run lint
+
+      - name: 运行单元测试
+        run: npm test
+
+      - name: 编译检查 (TypeScript)
+        run: npm run build
+```
+
+**配置要点**：
+- 触发条件：`push` 和 `pull_request` 到 `master` 分支
+- 运行环境：`ubuntu-latest`
+- Node.js 版本矩阵：`20.x`（可扩展多版本）
+- 使用 `npm ci` 确保依赖版本精确一致
+- 开启 npm 缓存加速 CI 构建
+- 步骤顺序：lint（廉价，秒级）→ test（中等，分钟级）→ build（秒级），问题在最早阶段被拦截
